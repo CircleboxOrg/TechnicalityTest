@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using TechnicalityTestAPI.Extensions;
 
 namespace TechnicalityTestAPI
 {
@@ -31,8 +32,8 @@ namespace TechnicalityTestAPI
             services.AddDbContext<ApiDbContext>(options =>
                 options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
 
-            services.AddScoped<ICCChargeRepository, CCChargeRepository>();
-            services.AddScoped<ICCChargeService, CCChargeService>();
+            services.RegisterAppRepositories()
+                    .RegisterAppServices();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
