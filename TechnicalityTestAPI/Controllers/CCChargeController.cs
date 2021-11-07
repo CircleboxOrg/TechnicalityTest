@@ -31,5 +31,16 @@ namespace TechnicalityTestAPI.Controllers
         {
             return _cCChargeService.CreateCCCharge(model.CustomerId, model.Amount);
         }
+
+        /// <summary>
+        /// Update Credit Charge
+        /// </summary>
+        /// <param name="updateModel"></param>
+        [HttpPut]
+        public void UpdateCCCharge(CChargeUpdateViewModel updateModel)
+        {
+            _cCChargeService.UpdateCCCharge(updateModel.ChargeId, updateModel.Amount);
+        }
+
     }
 }

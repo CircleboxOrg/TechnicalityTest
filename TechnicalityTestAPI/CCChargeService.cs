@@ -17,14 +17,16 @@ namespace TechnicalityTestAPI
         public List<CCChargeViewModel> GetCharges(int customerId)
         {
             var list = new List<CCChargeViewModel>();
-            
+
             var charges = _repository.GetCharges(customerId);
             foreach (var charge in charges)
             {
-                var item = new CCChargeViewModel();
-                item.ChargeId = charge.CreditCardChargeId;
-                item.CustomerId = charge.CustomerId;
-                item.Amount = charge.Amount;
+                list.Add(new CCChargeViewModel()
+                {
+                    ChargeId = charge.CreditCardChargeId,
+                    CustomerId = charge.CustomerId,
+                    Amount = charge.Amount
+                });
             }
 
             return list;
@@ -44,8 +46,8 @@ namespace TechnicalityTestAPI
             var model = new CreditCardCharge();
             model.Amount = amount;
 
-            _repository.UpdateCharge(chargeId, model );
+            _repository.UpdateCharge(chargeId, model);
         }
-        
+
     }
 }
