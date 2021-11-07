@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace TechnicalityTestAPI.Controllers
 {
@@ -9,37 +6,23 @@ namespace TechnicalityTestAPI.Controllers
     [Route("[controller]")]
     public class CCChargeController : ControllerBase
     {
-        private readonly ApiDbContext _context;
+        private readonly ICCChargeService _ccChargeService;
 
-        public CCChargeController(ApiDbContext context)
+        public CCChargeController(ICCChargeService ccChargeService)
         {
-            _context = context;
+            _ccChargeService = ccChargeService;
         }
 
         [HttpGet]
-        public List<CCChargeViewModel> Get(int id)
+        public IActionResult Get(int id)
         {
-            // id is CustomerId
-
-            return _context.CreditCardCharges.Where(c => c.CustomerId == id).Select(c =>
-                new CCChargeViewModel { CustomerId = c.CustomerId, Amount = c.Amount }).ToList();
+            return Ok(_ccChargeService.GetCharges(id));
         }
 
         [HttpPost]
-        public int CreateCCCharge(CCChargeViewModel model)
+        public IActionResult CreateCCCharge(CCChargeViewModel model)
         {
-            var ccc = new CreditCardCharge
-            {
-                CreditCardChargeId = model.ChargeId,
-                CustomerId = model.CustomerId,
-                Amount = model.Amount,
-                ChargeDateTime = DateTime.UtcNow
-            };
-
-            _context.CreditCardCharges.Add(ccc);
-            _context.SaveChanges();
-
-            return ccc.CreditCardChargeId;
+            return Ok(_ccChargeService.CreateCCCharge(model));
         }
     }
 }
