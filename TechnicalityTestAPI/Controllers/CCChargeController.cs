@@ -24,5 +24,12 @@ namespace TechnicalityTestAPI.Controllers
         {
             return Ok(_ccChargeService.CreateCCCharge(model));
         }
+
+        [HttpPut("{id}/{amount}")]
+        public IActionResult UpdateCCCharge(int id, decimal amount)
+        {
+            _ccChargeService.UpdateCCCharge(id, amount);
+            return Ok();
+        }
     }
 }

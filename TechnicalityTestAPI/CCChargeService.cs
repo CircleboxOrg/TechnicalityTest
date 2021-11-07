@@ -43,7 +43,8 @@ namespace TechnicalityTestAPI
         {
             var model = new CreditCardCharge
             {
-                Amount = amount
+                Amount = amount,
+                ChargeDateTime = DateTime.UtcNow
             };
 
             _repository.UpdateCharge(chargeId, model);

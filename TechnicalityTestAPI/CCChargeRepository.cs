@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace TechnicalityTestAPI
 {
@@ -18,6 +16,7 @@ namespace TechnicalityTestAPI
         {
             return _context.CreditCardCharges.Where(c => c.CustomerId == customerId).ToList();
         }
+
         public CreditCardCharge Get(int chargeId)
         {
             return _context.CreditCardCharges.Find(chargeId);
