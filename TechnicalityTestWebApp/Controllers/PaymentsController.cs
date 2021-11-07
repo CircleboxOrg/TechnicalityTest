@@ -131,6 +131,21 @@ namespace TechnicalityTestWebApp.Controllers
                 {
                     _context.Update(payment);
                     await _context.SaveChangesAsync();
+
+
+                    if (payment.CreditCardChargeId.HasValue)
+                    {
+                        var updateCreditChargeVM = new Models.CChargeUpdateViewModel
+                        {
+                            Amount = payment.Amount,
+                            ChargeId = payment.CreditCardChargeId.Value
+                        };
+
+                        var updateChargeJson = JsonSerializer.Serialize(updateCreditChargeVM);
+                        var requestContent = new StringContent(updateChargeJson, Encoding.UTF8, "application/json");
+                        var url = _config["ApiUrl"] + "/CCCharge";
+                        var response = await _httpClient.PutAsync(url, requestContent);
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
