@@ -11,6 +11,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using TechnicalityTestWebApp.Utility;
 
 namespace TechnicalityTestWebApp.Controllers
 {
@@ -84,6 +85,11 @@ namespace TechnicalityTestWebApp.Controllers
                 var requestContent = new StringContent(chargeJson, Encoding.UTF8, "application/json");
                 var url = _config["ApiUrl"] + "/CCCharge";
                 var response = await _httpClient.PostAsync(url, requestContent);
+
+                payment.CreditCardChargeId = await response.Content.ReadAsAsync<int?>();
+
+
+                //response.Content.ReadAsStringAsync()
 
                 payment.PaymentDateTime = DateTime.UtcNow;
                 _context.Add(payment);
