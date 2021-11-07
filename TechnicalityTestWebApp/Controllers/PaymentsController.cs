@@ -11,6 +11,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using TechnicalityTestWebApp.Utility;
 
 namespace TechnicalityTestWebApp.Controllers
 {
@@ -85,6 +86,7 @@ namespace TechnicalityTestWebApp.Controllers
                 var url = _config["ApiUrl"] + "/CCCharge";
                 var response = await _httpClient.PostAsync(url, requestContent);
 
+                payment.CreditCardChargeId = await response.Content.ReadAsAsync<int?>();
                 payment.PaymentDateTime = DateTime.UtcNow;
                 _context.Add(payment);
                 await _context.SaveChangesAsync();
@@ -129,6 +131,21 @@ namespace TechnicalityTestWebApp.Controllers
                 {
                     _context.Update(payment);
                     await _context.SaveChangesAsync();
+
+
+                    if (payment.CreditCardChargeId.HasValue)
+                    {
+                        var updateCreditChargeVM = new Models.CChargeUpdateViewModel
+                        {
+                            Amount = payment.Amount,
+                            ChargeId = payment.CreditCardChargeId.Value
+                        };
+
+                        var updateChargeJson = JsonSerializer.Serialize(updateCreditChargeVM);
+                        var requestContent = new StringContent(updateChargeJson, Encoding.UTF8, "application/json");
+                        var url = _config["ApiUrl"] + "/CCCharge";
+                        var response = await _httpClient.PutAsync(url, requestContent);
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
