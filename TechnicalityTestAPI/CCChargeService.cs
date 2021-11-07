@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace TechnicalityTestAPI
 {
@@ -17,35 +16,38 @@ namespace TechnicalityTestAPI
         public List<CCChargeViewModel> GetCharges(int customerId)
         {
             var list = new List<CCChargeViewModel>();
-            
-            var charges = _repository.GetCharges(customerId);
-            foreach (var charge in charges)
-            {
-                var item = new CCChargeViewModel();
-                item.ChargeId = charge.CreditCardChargeId;
-                item.CustomerId = charge.CustomerId;
-                item.Amount = charge.Amount;
-            }
 
-            return list;
+            var charges = _repository.GetCharges(customerId); 
+            return charges.Select(x => new CCChargeViewModel
+            {
+                ChargeId = x.CreditCardChargeId,
+                CustomerId = x.CustomerId,
+                Amount = x.Amount
+            }).ToList();
         }
 
-        public int CreateCCCharge(int customerId, decimal amount)
+        public int CreateCCCharge(CCChargeViewModel model)
         {
-            var model = new CreditCardCharge();
-            model.CustomerId = customerId;
-            model.Amount = amount;
-            model.ChargeDateTime = DateTime.UtcNow;
-            return _repository.CreateCharge(model);
+            var creditCardCharge = new CreditCardCharge
+            {
+                CreditCardChargeId = model.ChargeId,
+                CustomerId = model.CustomerId,
+                Amount = model.Amount,
+                ChargeDateTime = DateTime.UtcNow
+            };
+
+            return _repository.CreateCharge(creditCardCharge);
         }
 
         public void UpdateCCCharge(int chargeId, decimal amount)
         {
-            var model = new CreditCardCharge();
-            model.Amount = amount;
+            var model = new CreditCardCharge
+            {
+                Amount = amount,
+                ChargeDateTime = DateTime.UtcNow
+            };
 
-            _repository.UpdateCharge(chargeId, model );
+            _repository.UpdateCharge(chargeId, model);
         }
-        
     }
 }

@@ -1,9 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace TechnicalityTestAPI.Controllers
 {
@@ -11,36 +6,30 @@ namespace TechnicalityTestAPI.Controllers
     [Route("[controller]")]
     public class CCChargeController : ControllerBase
     {
-        
-        private readonly ApiDbContext _context;
-        
-        public CCChargeController(ApiDbContext context)
+        private readonly ICCChargeService _ccChargeService;
+
+        public CCChargeController(ICCChargeService ccChargeService)
         {
-            _context = context;
+            _ccChargeService = ccChargeService;
         }
 
         [HttpGet]
-        public List<CCChargeViewModel> Get(int id)
+        public IActionResult Get(int id)
         {
-            // id is CustomerId
-
-            return _context.CreditCardCharges.Where(c => c.CustomerId == id).Select(c =>
-                new CCChargeViewModel { CustomerId = c.CustomerId, Amount = c.Amount }).ToList();
+            return Ok(_ccChargeService.GetCharges(id));
         }
 
         [HttpPost]
-        public int CreateCCCharge(CCChargeViewModel model)
+        public IActionResult CreateCCCharge(CCChargeViewModel model)
         {
-            var ccc = new CreditCardCharge();
-            ccc.CustomerId = model.CustomerId;
-            ccc.Amount = model.Amount;
-            ccc.ChargeDateTime = DateTime.UtcNow;
+            return Ok(_ccChargeService.CreateCCCharge(model));
+        }
 
-            _context.CreditCardCharges.Add(ccc);
-            _context.SaveChanges();
-
-            return ccc.CreditCardChargeId;
-
+        [HttpPut("{id}/{amount}")]
+        public IActionResult UpdateCCCharge(int id, decimal amount)
+        {
+            _ccChargeService.UpdateCCCharge(id, amount);
+            return Ok();
         }
     }
 }
