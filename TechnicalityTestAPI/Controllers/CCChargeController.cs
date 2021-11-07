@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace TechnicalityTestAPI.Controllers
 {
@@ -11,9 +9,8 @@ namespace TechnicalityTestAPI.Controllers
     [Route("[controller]")]
     public class CCChargeController : ControllerBase
     {
-        
         private readonly ApiDbContext _context;
-        
+
         public CCChargeController(ApiDbContext context)
         {
             _context = context;
@@ -31,16 +28,18 @@ namespace TechnicalityTestAPI.Controllers
         [HttpPost]
         public int CreateCCCharge(CCChargeViewModel model)
         {
-            var ccc = new CreditCardCharge();
-            ccc.CustomerId = model.CustomerId;
-            ccc.Amount = model.Amount;
-            ccc.ChargeDateTime = DateTime.UtcNow;
+            var ccc = new CreditCardCharge
+            {
+                CreditCardChargeId = model.ChargeId,
+                CustomerId = model.CustomerId,
+                Amount = model.Amount,
+                ChargeDateTime = DateTime.UtcNow
+            };
 
             _context.CreditCardCharges.Add(ccc);
             _context.SaveChanges();
 
             return ccc.CreditCardChargeId;
-
         }
     }
 }
