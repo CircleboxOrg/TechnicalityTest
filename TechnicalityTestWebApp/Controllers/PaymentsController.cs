@@ -87,10 +87,6 @@ namespace TechnicalityTestWebApp.Controllers
                 var response = await _httpClient.PostAsync(url, requestContent);
 
                 payment.CreditCardChargeId = await response.Content.ReadAsAsync<int?>();
-
-
-                //response.Content.ReadAsStringAsync()
-
                 payment.PaymentDateTime = DateTime.UtcNow;
                 _context.Add(payment);
                 await _context.SaveChangesAsync();
