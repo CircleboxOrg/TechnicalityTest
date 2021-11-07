@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using System;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using TechnicalityTestWebApp;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text;
-using Microsoft.Extensions.Configuration;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace TechnicalityTestWebApp.Controllers
 {
@@ -80,14 +77,22 @@ namespace TechnicalityTestWebApp.Controllers
                     Amount = payment.Amount
                 };
 
-                var chargeJson = JsonSerializer.Serialize(vm);
+                var chargeJson = JsonConvert.SerializeObject(vm);
                 var requestContent = new StringContent(chargeJson, Encoding.UTF8, "application/json");
                 var url = _config["ApiUrl"] + "/CCCharge";
                 var response = await _httpClient.PostAsync(url, requestContent);
+                var chargeId = 0;
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadAsStringAsync();
+                    chargeId = JsonConvert.DeserializeObject<int>(data);
+                }
 
                 payment.PaymentDateTime = DateTime.UtcNow;
+                payment.CreditCardChargeId = chargeId;
                 _context.Add(payment);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index), new { id = payment.CustomerId });
             }
             ViewData["CustomerId"] = payment.CustomerId;
