@@ -134,6 +134,13 @@ namespace TechnicalityTestWebApp.Controllers
                 {
                     _context.Update(payment);
                     await _context.SaveChangesAsync();
+
+                    if (payment.CreditCardChargeId.HasValue) // Update payment amount if CreditCardChargeId has value
+                    {
+                        var requestContent = new StringContent("", Encoding.UTF8, "application/json");
+                        var url = $"{_config["ApiUrl"]}/CCCharge/{payment.CreditCardChargeId.Value}/{payment.Amount}";
+                        await _httpClient.PutAsync(url, requestContent); // Response is not handled, just api call is made as requested.
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
