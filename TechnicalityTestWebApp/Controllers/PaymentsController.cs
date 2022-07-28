@@ -74,6 +74,7 @@ namespace TechnicalityTestWebApp.Controllers
             if (ModelState.IsValid)
             {
                 // Call Credit Card API
+              
                 var vm = new Models.CCChargeViewModel
                 {
                     CustomerId = payment.CustomerId,
@@ -84,7 +85,8 @@ namespace TechnicalityTestWebApp.Controllers
                 var requestContent = new StringContent(chargeJson, Encoding.UTF8, "application/json");
                 var url = _config["ApiUrl"] + "/CCCharge";
                 var response = await _httpClient.PostAsync(url, requestContent);
-
+                int creditCardChargeId =Convert.ToInt16( response.Content.ReadAsStringAsync().Result);
+                payment.CreditCardChargeId =creditCardChargeId;
                 payment.PaymentDateTime = DateTime.UtcNow;
                 _context.Add(payment);
                 await _context.SaveChangesAsync();
