@@ -17,7 +17,7 @@ namespace TechnicalityTestAPI
         public List<CCChargeViewModel> GetCharges(int customerId)
         {
             var list = new List<CCChargeViewModel>();
-            
+
             var charges = _repository.GetCharges(customerId);
             foreach (var charge in charges)
             {
@@ -41,11 +41,14 @@ namespace TechnicalityTestAPI
 
         public void UpdateCCCharge(int chargeId, decimal amount)
         {
-            var model = new CreditCardCharge();
-            model.Amount = amount;
+            CreditCardCharge model = new CreditCardCharge
+            {
+                Amount = amount,
+                ChargeDateTime = DateTime.UtcNow
+            };
 
-            _repository.UpdateCharge(chargeId, model );
+            _repository.UpdateCharge(chargeId, model);
         }
-        
+
     }
 }
